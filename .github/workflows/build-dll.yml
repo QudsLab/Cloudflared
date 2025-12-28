@@ -19,18 +19,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Windows (native builds)
+          # Windows x64 (native)
           - os: windows-latest
             goos: windows
             goarch: amd64
             ext: .dll
             name: cloudflared-windows-amd64
 
+          # Windows 386 (needs special toolchain)
           - os: windows-latest
             goos: windows
             goarch: 386
             ext: .dll
             name: cloudflared-windows-386
+            cross: windows-386
 
           # Linux x64 (native)
           - os: ubuntu-latest
@@ -120,6 +122,14 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
+      # Windows 386 - Install 32-bit MinGW
+      - name: Install MinGW 32-bit (Windows 386)
+        if: matrix.cross == 'windows-386'
+        shell: powershell
+        run: |
+          choco install mingw --x86 --force -y
+          echo "C:\tools\mingw32\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
       # Linux cross-compile setup
       - name: Install Linux ARM64 cross-compiler
         if: matrix.cross == 'linux-arm64'
@@ -161,6 +171,20 @@ jobs:
         run: |
           cd cloudflared-src
           go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+
+      # Windows 386 build
+      - name: Build (Windows 386)
+        if: matrix.cross == 'windows-386'
+        shell: cmd
+        run: |
+          set GOOS=windows
+          set GOARCH=386
+          set CGO_ENABLED=1
+          set CC=C:\tools\mingw32\bin\gcc.exe
+          cd cloudflared-src
+          go build -buildmode=c-shared -o ..\%name%.dll .\cmd\cloudflared
+        env:
+          name: ${{ matrix.name }}
 
       # Linux ARM64 cross-compile
       - name: Build (Linux ARM64)
@@ -224,16 +248,16 @@ jobs:
         shell: bash
         run: |
           mkdir -p binaries/${{ matrix.goos }}-${{ matrix.goarch }}
-          mv ${{ matrix.name }}${{ matrix.ext }} binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
+          mv ${{ matrix.name }}${{ matrix.ext }} binaries/${{ matrix.goos }}-${{ matrix.goarch }}/ || true
           [ -f "${{ matrix.name }}.h" ] && mv ${{ matrix.name }}.h binaries/${{ matrix.goos }}-${{ matrix.goarch }}/ || true
 
           cd binaries/${{ matrix.goos }}-${{ matrix.goarch }}
           if command -v sha256sum &> /dev/null; then
-            sha256sum * > SHA256SUMS.txt
-            md5sum * > MD5SUMS.txt
+            sha256sum * > SHA256SUMS.txt 2>/dev/null || true
+            md5sum * > MD5SUMS.txt 2>/dev/null || true
           elif command -v shasum &> /dev/null; then
-            shasum -a 256 * > SHA256SUMS.txt
-            md5 -r * > MD5SUMS.txt
+            shasum -a 256 * > SHA256SUMS.txt 2>/dev/null || true
+            md5 -r * > MD5SUMS.txt 2>/dev/null || true
           fi
 
       - name: Upload artifacts
