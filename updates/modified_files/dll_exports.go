@@ -16,6 +16,7 @@ var (
 	globalShutdownC   chan struct{}
 	globalMu          sync.Mutex
 	globalInitialized bool
+	globalStopped     bool
 )
 
 //export CloudflaredInit
@@ -29,6 +30,7 @@ func CloudflaredInit() C.int {
 
 	globalShutdownC = make(chan struct{})
 	globalInitialized = true
+	globalStopped = false
 	return 0
 }
 
@@ -78,13 +80,22 @@ func CloudflaredStop() C.int {
 	globalMu.Lock()
 	defer globalMu.Unlock()
 
-	if !globalInitialized || globalShutdownC == nil {
+	// Already stopped or not initialized
+	if !globalInitialized || globalStopped || globalShutdownC == nil {
 		return -1
 	}
+
+	// Use recover to prevent panic on double close
+	defer func() {
+		if r := recover(); r != nil {
+			// Channel was already closed, ignore
+		}
+	}()
 
 	close(globalShutdownC)
 	globalShutdownC = nil
 	globalInitialized = false
+	globalStopped = true
 	return 0
 }
 

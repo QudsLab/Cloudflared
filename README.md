@@ -1,107 +1,90 @@
-# Cloudflared DLL/Shared Library Build
+# Cloudflared DLL Build
 
-Build [cloudflared](https://github.com/cloudflare/cloudflared) as DLL/shared library instead of executable.
+Build [cloudflared](https://github.com/cloudflare/cloudflared) as a shared library (DLL/SO/DYLIB).
 
 ## Quick Start
 
 ```bash
-# Clone this repo
-git clone <this-repo-url>
+# 1. Load DLL
+python test.py binaries/windows-amd64/cloudflared-windows-amd64.dll
 
-# Clone cloudflared
-git clone https://github.com/cloudflare/cloudflared.git
-
-# Apply modifications
-python updates/replace.py ./cloudflared
-
-# Build (Windows example)
-cd cloudflared
-go build -buildmode=c-shared -o cloudflared.dll ./cmd/cloudflared
+# 2. Or use in your code:
+import ctypes
+lib = ctypes.CDLL("cloudflared.dll")
+lib.CloudflaredInit()
+lib.CloudflaredRun(b"cloudflared tunnel --url http://localhost:8080 --protocol http2")
+# ... your app runs ...
+lib.CloudflaredStop()
 ```
 
 ## Exported Functions
 
-| Function             | Signature                            | Description                                  |
-| -------------------- | ------------------------------------ | -------------------------------------------- |
-| `CloudflaredInit`    | `int CloudflaredInit()`              | Initialize cloudflared, returns 0 on success |
-| `CloudflaredRun`     | `int CloudflaredRun(char* args)`     | Run with args (async), returns 0 on success  |
-| `CloudflaredRunSync` | `int CloudflaredRunSync(char* args)` | Run with args (blocking)                     |
-| `CloudflaredStop`    | `int CloudflaredStop()`              | Stop and cleanup                             |
-| `CloudflaredVersion` | `char* CloudflaredVersion()`         | Get version string                           |
+| Function                         | Description                   |
+| -------------------------------- | ----------------------------- |
+| `CloudflaredInit()`              | Initialize (call once)        |
+| `CloudflaredRun(char* args)`     | Run tunnel command (async)    |
+| `CloudflaredRunSync(char* args)` | Run tunnel command (blocking) |
+| `CloudflaredStop()`              | Shutdown gracefully           |
+| `CloudflaredVersion()`           | Get version string            |
 
-## Usage Example
+## Platforms (12)
 
-### C/C++
+| Platform                  | File     |
+| ------------------------- | -------- |
+| Windows x64/x86           | `.dll`   |
+| Linux x64/x86/ARM64/ARM   | `.so`    |
+| macOS Intel/ARM64         | `.dylib` |
+| Android ARM64/ARM/x64/x86 | `.so`    |
 
-```c
-#include "cloudflared.h"
+## Important: Protocol Selection
 
-int main() {
-    CloudflaredInit();
-    CloudflaredRunSync("cloudflared tunnel run my-tunnel");
-    CloudflaredStop();
-    return 0;
-}
+> **Use `--protocol http2`** if you have firewall/network issues!
+
+```bash
+# QUIC (default) - uses UDP, often blocked by firewalls
+cloudflared tunnel --url http://localhost:8080
+
+# HTTP/2 - uses TCP, works through most firewalls ✓
+cloudflared tunnel --url http://localhost:8080 --protocol http2
 ```
 
-### Python (ctypes)
+## Why QUIC Fails
 
-```python
-import ctypes
+QUIC uses UDP which is often blocked by:
 
-lib = ctypes.CDLL("./cloudflared.dll")  # or .so/.dylib
-lib.CloudflaredInit()
-lib.CloudflaredRunSync(b"cloudflared tunnel run my-tunnel")
-lib.CloudflaredStop()
+- Corporate firewalls
+- VPNs
+- Some ISPs
+- Windows Firewall with strict rules
+
+**Solution**: Add `--protocol http2` to use TCP instead.
+
+## Build It Yourself
+
+```bash
+# 1. Clone
+git clone https://github.com/cloudflare/cloudflared.git
+
+# 2. Apply modifications
+python updates/replace.py ./cloudflared
+
+# 3. Build
+cd cloudflared
+go build -buildmode=c-shared -o cloudflared.dll ./cmd/cloudflared
 ```
-
-## Build Platforms
-
-| Platform      | File     | GOOS/GOARCH   |
-| ------------- | -------- | ------------- |
-| Windows x64   | `.dll`   | windows/amd64 |
-| Windows x86   | `.dll`   | windows/386   |
-| Linux x64     | `.so`    | linux/amd64   |
-| Linux x86     | `.so`    | linux/386     |
-| Linux ARM64   | `.so`    | linux/arm64   |
-| Linux ARM     | `.so`    | linux/arm     |
-| macOS Intel   | `.dylib` | darwin/amd64  |
-| macOS ARM64   | `.dylib` | darwin/arm64  |
-| Android ARM64 | `.so`    | android/arm64 |
-| Android ARM   | `.so`    | android/arm   |
-| Android x64   | `.so`    | android/amd64 |
-| Android x86   | `.so`    | android/386   |
-| FreeBSD x64   | `.so`    | freebsd/amd64 |
-| OpenBSD x64   | `.so`    | openbsd/amd64 |
 
 ## Files Modified
 
-| File                 | Change                                 |
-| -------------------- | -------------------------------------- |
-| `main.go`            | Added `runAppWithArgs()` for DLL entry |
-| `dll_exports.go`     | **NEW** - C-exported functions         |
-| `generic_service.go` | `runApp()` accepts `args` parameter    |
-| `linux_service.go`   | `runApp()` accepts `args` parameter    |
-| `macos_service.go`   | `runApp()` accepts `args` parameter    |
-| `windows_service.go` | `runApp()` accepts `args` parameter    |
+| File             | Change                   |
+| ---------------- | ------------------------ |
+| `main.go`        | Added `runAppWithArgs()` |
+| `dll_exports.go` | **NEW** - C exports      |
+| `*_service.go`   | Accept args parameter    |
 
-## Automated Builds
+## GitHub Actions
 
-GitHub Actions builds run twice daily (`0 6,18 * * *`). Binaries are committed to `binaries/` with SHA256/MD5 checksums.
-
-## Build Commands
-
-```bash
-# Windows DLL
-GOOS=windows GOARCH=amd64 CGO_ENABLED=1 go build -buildmode=c-shared -o cloudflared.dll ./cmd/cloudflared
-
-# Linux SO
-GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -buildmode=c-shared -o cloudflared.so ./cmd/cloudflared
-
-# macOS DYLIB
-GOOS=darwin GOARCH=arm64 CGO_ENABLED=1 go build -buildmode=c-shared -o cloudflared.dylib ./cmd/cloudflared
-```
+Builds run automatically and commit to `binaries/` folder.
 
 ## License
 
-Original cloudflared is licensed under [Apache 2.0](https://github.com/cloudflare/cloudflared/blob/master/LICENSE).
+Apache 2.0 (same as cloudflared)
