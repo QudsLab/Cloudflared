@@ -27,7 +27,8 @@ jobs:
             name: cloudflared-windows-amd64
 
           # Windows 386 (needs special toolchain)
-          - os: windows-latest
+          # Windows 386 (cross-compile from Linux)
+          - os: ubuntu-latest
             goos: windows
             goarch: 386
             ext: .dll
@@ -122,13 +123,14 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
-      # Windows 386 - Install 32-bit MinGW
-      - name: Install MinGW 32-bit (Windows 386)
+      # Windows 386 - Use existing MinGW but skip 32-bit for now (not well supported)
+      # Windows 386 build is complex due to toolchain issues - build on Linux instead
+      - name: Setup cross-compile for Windows 386
         if: matrix.cross == 'windows-386'
-        shell: powershell
         run: |
-          choco install mingw --x86 --force -y
-          echo "C:\tools\mingw32\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "Windows 386 cross-compilation from Linux"
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-i686 g++-mingw-w64-i686
 
       # Linux cross-compile setup
       - name: Install Linux ARM64 cross-compiler
@@ -172,19 +174,18 @@ jobs:
           cd cloudflared-src
           go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
 
-      # Windows 386 build
+      # Windows 386 build (cross-compiled from Linux)
       - name: Build (Windows 386)
         if: matrix.cross == 'windows-386'
-        shell: cmd
-        run: |
-          set GOOS=windows
-          set GOARCH=386
-          set CGO_ENABLED=1
-          set CC=C:\tools\mingw32\bin\gcc.exe
-          cd cloudflared-src
-          go build -buildmode=c-shared -o ..\%name%.dll .\cmd\cloudflared
         env:
-          name: ${{ matrix.name }}
+          GOOS: windows
+          GOARCH: 386
+          CGO_ENABLED: 1
+          CC: i686-w64-mingw32-gcc
+          CXX: i686-w64-mingw32-g++
+        run: |
+          cd cloudflared-src
+          go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
 
       # Linux ARM64 cross-compile
       - name: Build (Linux ARM64)
