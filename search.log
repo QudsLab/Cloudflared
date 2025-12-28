@@ -1,0 +1,134 @@
+38 results - 15 files
+
+cmd\cloudflared\generic_service.go:
+0030  	})
+0031: 	app.Run(os.Args)
+0032  }
+
+cmd\cloudflared\linux_service.go:
+0038  	})
+0039: 	_ = app.Run(os.Args)
+0040  }
+
+cmd\cloudflared\macos_service.go:
+0037  	})
+0038: 	_ = app.Run(os.Args)
+0039  }
+
+cmd\cloudflared\windows_service.go:
+0079  	if isIntSess {
+0080: 		app.Run(os.Args)
+0081  		return
+
+0091  			// Run the app in "interactive" mode anyway.
+0092: 			app.Run(os.Args)
+0093  			return
+
+0128  		// fall back to the arguments from ImagePath (or, as sc calls it, binPath)
+0129: 		args = os.Args
+0130  	}
+
+vendor\github.com\coredns\caddy\upgrade.go:
+0058  
+0059: 	if len(os.Args) == 0 { // this should never happen, but...
+0060: 		os.Args = []string{""}
+0061  	}
+
+0123  	// set up the command
+0124: 	cmd := exec.Command(os.Args[0], os.Args[1:]...)
+0125  	cmd.Stdin = rpipe      // fd 0
+
+vendor\github.com\facebookgo\grace\gracenet\net.go:
+0223  	// the file it points to has been changed we will use the updated symlink.
+0224: 	argv0, err := exec.LookPath(os.Args[0])
+0225  	if err != nil {
+
+0238  	allFiles := append([]*os.File{os.Stdin, os.Stdout, os.Stderr}, files...)
+0239: 	process, err := os.StartProcess(argv0, os.Args, &os.ProcAttr{
+0240  		Dir:   originalWD,
+
+vendor\github.com\onsi\ginkgo\v2\ginkgo\main.go:
+0045  
+0046: 	program.RunAndExit(os.Args)
+0047  }
+
+vendor\github.com\quic-go\quic-go\logging\generate_multiplexer.go:
+0020  func main() {
+0021: 	if len(os.Args) != 5 {
+0022: 		log.Fatalf("Usage: %s <struct_name> <input_file> <template_file> <output_file>", os.Args[0])
+0023  	}
+0024  
+0025: 	structName := os.Args[1]
+0026: 	inputFile := os.Args[2]
+0027: 	templateFile := os.Args[3]
+0028: 	outputFile := os.Args[4]
+0029  
+
+vendor\github.com\urfave\cli\v2\app.go:
+0025  type App struct {
+0026: 	// The name of the program. Defaults to path.Base(os.Args[0])
+0027  	Name string
+
+0103  func compileTime() time.Time {
+0104: 	info, err := os.Stat(os.Args[0])
+0105  	if err != nil {
+
+0114  	return &App{
+0115: 		Name:         filepath.Base(os.Args[0]),
+0116: 		HelpName:     filepath.Base(os.Args[0]),
+0117  		Usage:        "A new cli application",
+
+0138  	if a.Name == "" {
+0139: 		a.Name = filepath.Base(os.Args[0])
+0140  	}
+
+0333  func (a *App) RunAndExitOnError() {
+0334: 	if err := a.Run(os.Args); err != nil {
+0335  		_, _ = fmt.Fprintln(a.ErrWriter, err)
+
+vendor\github.com\urfave\cli\v2\cli.go:
+0004  //   func main() {
+0005: //     (&cli.App{}).Run(os.Args)
+0006  //   }
+
+0018  //
+0019: //     app.Run(os.Args)
+0020  //   }
+
+vendor\github.com\urfave\cli\v2\help.go:
+0124  		flag := fmt.Sprintf("%s%s", strings.Repeat("-", count), name)
+0125: 		for _, a := range os.Args {
+0126  			if a == flag {
+
+0163  	return func(c *Context) {
+0164: 		if len(os.Args) > 2 {
+0165: 			lastArg := os.Args[len(os.Args)-2]
+0166  			if strings.HasPrefix(lastArg, "-") {
+
+vendor\go.opentelemetry.io\otel\sdk\resource\process.go:
+0030  	defaultExecutablePathProvider executablePathProvider = os.Executable
+0031: 	defaultCommandArgsProvider    commandArgsProvider    = func() []string { return os.Args }
+0032  	defaultOwnerProvider          ownerProvider          = user.Current
+
+vendor\go.uber.org\mock\mockgen\mockgen.go:
+0338  		// only log the name of the executable, not the full path
+0339: 		name := filepath.Base(os.Args[0])
+0340  		if runtime.GOOS == "windows" {
+
+0342  		}
+0343: 		g.p("//\t%v", strings.Join(append([]string{name}, os.Args[1:]...), " "))
+0344  		g.p("//")
+
+0440  	if *writeGenerateDirective {
+0441: 		g.p("//go:generate %v", strings.Join(os.Args, " "))
+0442  	}
+
+vendor\golang.org\x\mod\internal\lazyregexp\lazyre.go:
+0065  
+0066: var inTest = len(os.Args) > 0 && strings.HasSuffix(strings.TrimSuffix(os.Args[0], ".exe"), ".test")
+0067  
+
+vendor\gopkg.in\natefinch\lumberjack.v2\lumberjack.go:
+0295  	}
+0296: 	name := filepath.Base(os.Args[0]) + "-lumberjack.log"
+0297  	return filepath.Join(os.TempDir(), name)

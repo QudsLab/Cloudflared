@@ -1,0 +1,233 @@
+name: Build Cloudflared DLL
+
+on:
+  schedule:
+    - cron: "0 6,18 * * *" # Twice daily at 6 AM and 6 PM UTC
+  workflow_dispatch: # Manual trigger
+  push:
+    branches: [main]
+    paths:
+      - "updates/**"
+      - ".github/workflows/build-dll.yml"
+
+env:
+  GO_VERSION: "1.22"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Windows
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            ext: .dll
+            name: cloudflared-windows-amd64
+          - os: windows-latest
+            goos: windows
+            goarch: 386
+            ext: .dll
+            name: cloudflared-windows-386
+
+          # Linux
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            ext: .so
+            name: cloudflared-linux-amd64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: 386
+            ext: .so
+            name: cloudflared-linux-386
+          - os: ubuntu-latest
+            goos: linux
+            goarch: arm64
+            ext: .so
+            name: cloudflared-linux-arm64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: arm
+            ext: .so
+            name: cloudflared-linux-arm
+
+          # macOS
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            ext: .dylib
+            name: cloudflared-darwin-amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            ext: .dylib
+            name: cloudflared-darwin-arm64
+
+          # Android
+          - os: ubuntu-latest
+            goos: android
+            goarch: arm64
+            ext: .so
+            name: cloudflared-android-arm64
+            cgo: android-ndk
+          - os: ubuntu-latest
+            goos: android
+            goarch: arm
+            ext: .so
+            name: cloudflared-android-arm
+            cgo: android-ndk
+          - os: ubuntu-latest
+            goos: android
+            goarch: amd64
+            ext: .so
+            name: cloudflared-android-amd64
+            cgo: android-ndk
+          - os: ubuntu-latest
+            goos: android
+            goarch: 386
+            ext: .so
+            name: cloudflared-android-386
+            cgo: android-ndk
+
+          # FreeBSD/OpenBSD
+          - os: ubuntu-latest
+            goos: freebsd
+            goarch: amd64
+            ext: .so
+            name: cloudflared-freebsd-amd64
+          - os: ubuntu-latest
+            goos: openbsd
+            goarch: amd64
+            ext: .so
+            name: cloudflared-openbsd-amd64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Clone cloudflared
+        run: git clone --depth 1 https://github.com/cloudflare/cloudflared.git cloudflared-src
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Setup Android NDK
+        if: matrix.cgo == 'android-ndk'
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r26b
+          add-to-path: true
+
+      - name: Replace source files
+        run: python updates/replace.py cloudflared-src
+
+      - name: Build shared library (Standard)
+        if: matrix.cgo != 'android-ndk'
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 1
+        run: |
+          cd cloudflared-src
+          go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+
+      - name: Build shared library (Android)
+        if: matrix.cgo == 'android-ndk'
+        env:
+          GOOS: android
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 1
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: |
+          cd cloudflared-src
+
+          # Set Android-specific compiler based on architecture
+          case "${{ matrix.goarch }}" in
+            arm64) CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang" ;;
+            arm)   CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang" ;;
+            amd64) CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang" ;;
+            386)   CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang" ;;
+          esac
+
+          CC=${CC} go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+
+      - name: Generate hashes
+        shell: bash
+        run: |
+          mkdir -p binaries/${{ matrix.goos }}-${{ matrix.goarch }}
+
+          # Move binary
+          mv ${{ matrix.name }}${{ matrix.ext }} binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
+
+          # Also move header file if exists
+          if [ -f "${{ matrix.name }}.h" ]; then
+            mv ${{ matrix.name }}.h binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
+          fi
+
+          cd binaries/${{ matrix.goos }}-${{ matrix.goarch }}
+
+          # Generate hashes
+          if command -v sha256sum &> /dev/null; then
+            sha256sum * > SHA256SUMS.txt
+            md5sum * > MD5SUMS.txt
+          elif command -v shasum &> /dev/null; then
+            shasum -a 256 * > SHA256SUMS.txt
+            md5 -r * > MD5SUMS.txt
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
+
+  commit-binaries:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: binaries/
+
+      - name: Reorganize artifacts
+        run: |
+          mkdir -p final-binaries
+          for dir in binaries/cloudflared-*/; do
+            name=$(basename "$dir")
+            platform=$(echo "$name" | sed 's/cloudflared-//')
+            mkdir -p "final-binaries/$platform"
+            cp -r "$dir"/* "final-binaries/$platform/"
+          done
+
+      - name: Get cloudflared version
+        id: version
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/cloudflare/cloudflared/releases/latest | jq -r '.tag_name')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "date=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Commit binaries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          rm -rf binaries
+          mv final-binaries binaries
+
+          git add binaries/
+          git commit -m "Build: ${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})" || echo "No changes"
+          git push

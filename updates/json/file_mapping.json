@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "description": "Cloudflared DLL build file modifications",
+  "source_repo": "https://github.com/cloudflare/cloudflared",
+  "files": [
+    {
+      "original_path": "cmd/cloudflared/main.go",
+      "modified_file": "modified_files/main.go",
+      "description": "Added runAppWithArgs function for DLL support"
+    },
+    {
+      "original_path": "cmd/cloudflared/dll_exports.go",
+      "modified_file": "modified_files/dll_exports.go",
+      "description": "NEW: C-exported DLL entry points",
+      "is_new": true
+    },
+    {
+      "original_path": "cmd/cloudflared/generic_service.go",
+      "modified_file": "modified_files/generic_service.go",
+      "description": "Changed runApp to accept args parameter"
+    },
+    {
+      "original_path": "cmd/cloudflared/linux_service.go",
+      "modified_file": "modified_files/linux_service.go",
+      "description": "Changed runApp to accept args parameter"
+    },
+    {
+      "original_path": "cmd/cloudflared/macos_service.go",
+      "modified_file": "modified_files/macos_service.go",
+      "description": "Changed runApp to accept args parameter"
+    },
+    {
+      "original_path": "cmd/cloudflared/windows_service.go",
+      "modified_file": "modified_files/windows_service.go",
+      "description": "Changed runApp to accept args parameter, updated windowsService struct"
+    }
+  ]
+}
