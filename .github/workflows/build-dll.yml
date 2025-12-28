@@ -64,13 +64,13 @@ jobs:
             cross: linux-arm
 
           # macOS (native builds)
-          - os: macos-13
+          - os: macos-15
             goos: darwin
             goarch: amd64
             ext: .dylib
             name: cloudflared-darwin-amd64
 
-          - os: macos-14
+          - os: macos-15
             goos: darwin
             goarch: arm64
             ext: .dylib
