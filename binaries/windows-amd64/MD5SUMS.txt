@@ -1,0 +1,3 @@
+ec8808f19f1d9d5ebd6851a9415afa6e *SHA256SUMS.txt
+f3e077ee9a9882b96167d46e4f916ae8 *cloudflared-windows-amd64.dll
+e4bf0bf5e1b247fcb51f45a4c8a06155 *cloudflared-windows-amd64.h

@@ -1,0 +1,2 @@
+b256106efeea3e3059741ff8e467c52842f741cbdb6180e2524ddb82adf0e344  cloudflared-linux-amd64.h
+45a651f81bb7f93c300d8086d6d67b88ecb8655a03e7745f5c6f74ed62c872a1  cloudflared-linux-amd64.so

@@ -1,0 +1,2 @@
+a2ec14c55b195ce5344aa1615461321bc71942f1d294d070abad69c95e4ae751  cloudflared-darwin-amd64.dylib
+b256106efeea3e3059741ff8e467c52842f741cbdb6180e2524ddb82adf0e344  cloudflared-darwin-amd64.h

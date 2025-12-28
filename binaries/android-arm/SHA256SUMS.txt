@@ -1,0 +1,2 @@
+68179af7490cb3c764b917bc295fd793896753541791e7ab11766feca401d941  cloudflared-android-arm.h
+c60b13b79ac9b3bad2f3679f54e80105fdd9e2d08f6008a9fe1e7544b73f339b  cloudflared-android-arm.so

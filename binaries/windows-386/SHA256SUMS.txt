@@ -1,0 +1,2 @@
+139e95055bcf7bf7299386afd333a6e5b6cae88a61303eaa6882d83d0d89675b  cloudflared-windows-386.dll
+fa674ada82237eb20c2e2b1df66f0a4d05c65a8d24befbcbc790bc5aa7be1392  cloudflared-windows-386.h

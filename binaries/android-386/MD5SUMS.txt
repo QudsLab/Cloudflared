@@ -1,0 +1,3 @@
+571ba80e88352544b635b759a2413aab  SHA256SUMS.txt
+4f1151e832def04cb01d113da40eb868  cloudflared-android-386.h
+33663d90fd50baac3e28087b26894724  cloudflared-android-386.so

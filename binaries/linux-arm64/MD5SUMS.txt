@@ -1,0 +1,3 @@
+51d7f19cc2b5711c1bfe3d91a271249b  SHA256SUMS.txt
+23d6575c91703697edeaaad0b362e14c  cloudflared-linux-arm64.h
+642d5ee045e111f888808ad0989edef0  cloudflared-linux-arm64.so

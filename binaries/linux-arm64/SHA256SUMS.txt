@@ -1,0 +1,2 @@
+b256106efeea3e3059741ff8e467c52842f741cbdb6180e2524ddb82adf0e344  cloudflared-linux-arm64.h
+0762522f3dffcfc94aea2e62b27c4deeb65ca250a97a0e7daa1c3e58dafd4f4b  cloudflared-linux-arm64.so

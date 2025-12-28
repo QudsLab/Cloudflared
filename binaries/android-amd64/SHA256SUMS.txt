@@ -1,0 +1,2 @@
+b256106efeea3e3059741ff8e467c52842f741cbdb6180e2524ddb82adf0e344  cloudflared-android-amd64.h
+cc1b48c723d34c630c418d1cfdd94cfbd58294533911b353b41555146e1f43b2  cloudflared-android-amd64.so

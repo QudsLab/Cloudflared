@@ -1,0 +1,3 @@
+7c85e2ed17b0041b23579a0d207766ea  SHA256SUMS.txt
+4f1151e832def04cb01d113da40eb868  cloudflared-linux-386.h
+a9815fe927a841c574bf25293a3cc06d  cloudflared-linux-386.so
