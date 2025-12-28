@@ -270,7 +270,7 @@ jobs:
   commit-binaries:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    # Always commit binaries after successful build
 
     steps:
       - name: Checkout
