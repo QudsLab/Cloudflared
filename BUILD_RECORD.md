@@ -104,7 +104,9 @@ void CloudflaredFreeString(char* s);      // Free returned strings
 
 ---
 
-## 14 Target Platforms
+## 12 Target Platforms
+
+> Note: FreeBSD/OpenBSD removed - Go doesn't support `-buildmode=c-shared` on these platforms.
 
 | #   | Platform      | GOOS    | GOARCH | Extension |
 | --- | ------------- | ------- | ------ | --------- |
@@ -120,8 +122,6 @@ void CloudflaredFreeString(char* s);      // Free returned strings
 | 10  | Android ARM   | android | arm    | .so       |
 | 11  | Android x64   | android | amd64  | .so       |
 | 12  | Android x86   | android | 386    | .so       |
-| 13  | FreeBSD x64   | freebsd | amd64  | .so       |
-| 14  | OpenBSD x64   | openbsd | amd64  | .so       |
 
 ---
 
