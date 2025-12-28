@@ -2,8 +2,8 @@ name: Build Cloudflared DLL
 
 on:
   schedule:
-    - cron: "0 6,18 * * *" # Twice daily at 6 AM and 6 PM UTC
-  workflow_dispatch: # Manual trigger
+    - cron: "0 6,18 * * *"
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -19,89 +19,91 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Windows
+          # Windows (native builds)
           - os: windows-latest
             goos: windows
             goarch: amd64
             ext: .dll
             name: cloudflared-windows-amd64
+
           - os: windows-latest
             goos: windows
             goarch: 386
             ext: .dll
             name: cloudflared-windows-386
 
-          # Linux
+          # Linux x64 (native)
           - os: ubuntu-latest
             goos: linux
             goarch: amd64
             ext: .so
             name: cloudflared-linux-amd64
+
+          # Linux 386 (cross-compile with multilib)
           - os: ubuntu-latest
             goos: linux
             goarch: 386
             ext: .so
             name: cloudflared-linux-386
+            cross: linux-386
+
+          # Linux ARM64 (cross-compile)
           - os: ubuntu-latest
             goos: linux
             goarch: arm64
             ext: .so
             name: cloudflared-linux-arm64
+            cross: linux-arm64
+
+          # Linux ARM (cross-compile)
           - os: ubuntu-latest
             goos: linux
             goarch: arm
             ext: .so
             name: cloudflared-linux-arm
+            cross: linux-arm
 
-          # macOS
-          - os: macos-latest
+          # macOS (native builds)
+          - os: macos-13
             goos: darwin
             goarch: amd64
             ext: .dylib
             name: cloudflared-darwin-amd64
-          - os: macos-latest
+
+          - os: macos-14
             goos: darwin
             goarch: arm64
             ext: .dylib
             name: cloudflared-darwin-arm64
 
-          # Android
+          # Android (NDK cross-compile)
           - os: ubuntu-latest
             goos: android
             goarch: arm64
             ext: .so
             name: cloudflared-android-arm64
-            cgo: android-ndk
+            cross: android
+
           - os: ubuntu-latest
             goos: android
             goarch: arm
             ext: .so
             name: cloudflared-android-arm
-            cgo: android-ndk
+            cross: android
+
           - os: ubuntu-latest
             goos: android
             goarch: amd64
             ext: .so
             name: cloudflared-android-amd64
-            cgo: android-ndk
+            cross: android
+
           - os: ubuntu-latest
             goos: android
             goarch: 386
             ext: .so
             name: cloudflared-android-386
-            cgo: android-ndk
-
-          # FreeBSD/OpenBSD
-          - os: ubuntu-latest
-            goos: freebsd
-            goarch: amd64
-            ext: .so
-            name: cloudflared-freebsd-amd64
-          - os: ubuntu-latest
-            goos: openbsd
-            goarch: amd64
-            ext: .so
-            name: cloudflared-openbsd-amd64
+            cross: android
 
     runs-on: ${{ matrix.os }}
 
@@ -118,8 +120,28 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
+      # Linux cross-compile setup
+      - name: Install Linux ARM64 cross-compiler
+        if: matrix.cross == 'linux-arm64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Install Linux ARM cross-compiler
+        if: matrix.cross == 'linux-arm'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+      - name: Install Linux 386 multilib
+        if: matrix.cross == 'linux-386'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib g++-multilib
+
+      # Android NDK setup
       - name: Setup Android NDK
-        if: matrix.cgo == 'android-ndk'
+        if: matrix.cross == 'android'
         uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
@@ -129,8 +151,9 @@ jobs:
       - name: Replace source files
         run: python updates/replace.py cloudflared-src
 
-      - name: Build shared library (Standard)
-        if: matrix.cgo != 'android-ndk'
+      # Native builds (no cross-compilation needed)
+      - name: Build (Native)
+        if: matrix.cross == ''
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
@@ -139,8 +162,47 @@ jobs:
           cd cloudflared-src
           go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
 
-      - name: Build shared library (Android)
-        if: matrix.cgo == 'android-ndk'
+      # Linux ARM64 cross-compile
+      - name: Build (Linux ARM64)
+        if: matrix.cross == 'linux-arm64'
+        env:
+          GOOS: linux
+          GOARCH: arm64
+          CGO_ENABLED: 1
+          CC: aarch64-linux-gnu-gcc
+          CXX: aarch64-linux-gnu-g++
+        run: |
+          cd cloudflared-src
+          go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+
+      # Linux ARM cross-compile
+      - name: Build (Linux ARM)
+        if: matrix.cross == 'linux-arm'
+        env:
+          GOOS: linux
+          GOARCH: arm
+          GOARM: 7
+          CGO_ENABLED: 1
+          CC: arm-linux-gnueabihf-gcc
+          CXX: arm-linux-gnueabihf-g++
+        run: |
+          cd cloudflared-src
+          go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+
+      # Linux 386 cross-compile
+      - name: Build (Linux 386)
+        if: matrix.cross == 'linux-386'
+        env:
+          GOOS: linux
+          GOARCH: 386
+          CGO_ENABLED: 1
+        run: |
+          cd cloudflared-src
+          go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+
+      # Android cross-compile
+      - name: Build (Android)
+        if: matrix.cross == 'android'
         env:
           GOOS: android
           GOARCH: ${{ matrix.goarch }}
@@ -149,32 +211,23 @@ jobs:
         run: |
           cd cloudflared-src
 
-          # Set Android-specific compiler based on architecture
           case "${{ matrix.goarch }}" in
-            arm64) CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang" ;;
-            arm)   CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang" ;;
-            amd64) CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang" ;;
-            386)   CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang" ;;
+            arm64) export CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang" ;;
+            arm)   export CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang" ;;
+            amd64) export CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang" ;;
+            386)   export CC="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang" ;;
           esac
 
-          CC=${CC} go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
+          go build -buildmode=c-shared -o ../${{ matrix.name }}${{ matrix.ext }} ./cmd/cloudflared
 
       - name: Generate hashes
         shell: bash
         run: |
           mkdir -p binaries/${{ matrix.goos }}-${{ matrix.goarch }}
-
-          # Move binary
           mv ${{ matrix.name }}${{ matrix.ext }} binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
-
-          # Also move header file if exists
-          if [ -f "${{ matrix.name }}.h" ]; then
-            mv ${{ matrix.name }}.h binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
-          fi
+          [ -f "${{ matrix.name }}.h" ] && mv ${{ matrix.name }}.h binaries/${{ matrix.goos }}-${{ matrix.goarch }}/ || true
 
           cd binaries/${{ matrix.goos }}-${{ matrix.goarch }}
-
-          # Generate hashes
           if command -v sha256sum &> /dev/null; then
             sha256sum * > SHA256SUMS.txt
             md5sum * > MD5SUMS.txt
@@ -224,10 +277,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
           rm -rf binaries
           mv final-binaries binaries
-
           git add binaries/
           git commit -m "Build: ${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})" || echo "No changes"
           git push
