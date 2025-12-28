@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"syscall"
 	"time"
 	"unsafe"
@@ -27,7 +28,7 @@ const (
 	recoverActionDelay      = time.Second * 20
 	failureCountResetPeriod = time.Hour * 24
 
-	serviceConfigFailureActionsFlag  = 4
+	serviceConfigFailureActionsFlag    = 4
 	serviceControllerConnectionFailure = 1063
 
 	LogFieldWindowsServiceName = "windowsServiceName"
