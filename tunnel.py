@@ -11,6 +11,7 @@ import os
 import time
 import threading
 import re
+import subprocess
 
 # Config
 CF_FILE = ".cf"
@@ -19,6 +20,54 @@ DLL_PATH = None
 lib = None
 tunnel_running = False
 tunnel_url = None
+warp_was_connected = False
+
+
+def check_warp_status():
+    """Check if WARP VPN is connected."""
+    try:
+        result = subprocess.run(
+            ["warp-cli", "status"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        output = result.stdout.lower()
+        return "connected" in output and "disconnected" not in output
+    except:
+        return False
+
+
+def disable_warp():
+    """Disable WARP VPN if connected."""
+    global warp_was_connected
+    
+    if check_warp_status():
+        print("[WARP] Detected WARP VPN is ON - disabling...")
+        warp_was_connected = True
+        try:
+            subprocess.run(["warp-cli", "disconnect"], timeout=10)
+            time.sleep(2)
+            print("[WARP] Disconnected")
+            return True
+        except Exception as e:
+            print(f"[WARP] Failed to disconnect: {e}")
+            return False
+    return True
+
+
+def restore_warp():
+    """Restore WARP VPN if it was connected before."""
+    global warp_was_connected
+    
+    if warp_was_connected:
+        print("[WARP] Restoring WARP VPN...")
+        try:
+            subprocess.run(["warp-cli", "connect"], timeout=10)
+            print("[WARP] Reconnected")
+            warp_was_connected = False
+        except Exception as e:
+            print(f"[WARP] Failed to reconnect: {e}")
 
 
 def find_dll():
@@ -108,6 +157,9 @@ def start_tunnel(port=8765, wait_for_url=True, timeout=60):
         print("[TUNNEL] ERROR: DLL not loaded")
         return False
     
+    # Disable WARP if running (conflicts with cloudflared)
+    disable_warp()
+    
     # Use HTTP/2 to avoid QUIC/firewall issues
     args = f"cloudflared tunnel --url http://localhost:{port} --protocol http2"
     
@@ -141,12 +193,19 @@ def stop_tunnel():
     global tunnel_running
     
     if not lib:
+        restore_warp()
         return
     
     print("[TUNNEL] Stopping...")
-    lib.CloudflaredStop()
+    try:
+        lib.CloudflaredStop()
+    except:
+        pass
     tunnel_running = False
     print("[TUNNEL] Stopped")
+    
+    # Restore WARP if it was connected before
+    restore_warp()
 
 
 def get_version():
