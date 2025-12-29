@@ -1,3 +1,8 @@
+<p align="center">
+    <img src="assets/banner.png" alt="Cloudflared Banner" />
+</p>
+
+
 # Cloudflared DLL Build
 
 Build [cloudflared](https://github.com/cloudflare/cloudflared) as a shared library (DLL/SO/DYLIB).

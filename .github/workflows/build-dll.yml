@@ -7,7 +7,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "updates/**"
+      - "**/*.go"
+      - "**/*.py"
       - ".github/workflows/build-dll.yml"
 
 env:
@@ -29,7 +30,6 @@ jobs:
             ext: .dll
             name: cloudflared-windows-amd64
 
-          # Windows 386 (needs special toolchain)
           # Windows 386 (cross-compile from Linux)
           - os: ubuntu-latest
             goos: windows
@@ -126,8 +126,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
-      # Windows 386 - Use existing MinGW but skip 32-bit for now (not well supported)
-      # Windows 386 build is complex due to toolchain issues - build on Linux instead
+      # Windows 386 cross-compile setup
       - name: Setup cross-compile for Windows 386
         if: matrix.cross == 'windows-386'
         run: |
@@ -273,7 +272,6 @@ jobs:
   commit-binaries:
     needs: build
     runs-on: ubuntu-latest
-    # Always commit binaries after successful build
 
     steps:
       - name: Checkout
@@ -301,12 +299,22 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "date=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
 
-      - name: Commit binaries
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate bin.json
+        run: |
+          rm -rf binaries
+          mv final-binaries binaries
+          python scripts/generate_binaries_json.py
+
+      - name: Commit binaries and metadata
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          rm -rf binaries
-          mv final-binaries binaries
           git add binaries/
+          git add bin.json
           git commit -m "Build: ${{ steps.version.outputs.version }} (${{ steps.version.outputs.date }})" || echo "No changes"
           git push
