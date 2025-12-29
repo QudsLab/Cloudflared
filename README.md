@@ -2,6 +2,27 @@
     <img src="assets/banner.png" alt="Cloudflared Banner" />
 </p>
 
+<!-- <div align="center">
+
+[![Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-orange?style=flat-square&logo=cloudflare)](#)
+
+</div> -->
+
+
+
+
+## Why The Hell Is This Here?
+
+Ever wondered why this repo exists? So did we! Maybe you want to run Cloudflare tunnels on Windows, Linux, macOS, or even Android, without the hassle of compiling Go code or hunting for binaries. Maybe you just like tunnels. Or maybe you just want to see if your VPN is lying to you. Either way, this project gives you:
+
+- Prebuilt binaries for every platform (even the weird ones)
+- DLL/SO/DYLIB for embedding in your own apps
+- Python utilities for scripting, automation, and fun
+- A reason to say "it just works" (most of the time)
+
+If you’re reading this, you’re probably either a developer, a hacker, or just lost. Welcome!
+
+
 <div align="center">
 
 [![Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-orange?style=flat-square&logo=cloudflare)](#)
@@ -29,12 +50,14 @@
 </div>
 
 
-# Cloudflared DLL Build
+## Cloudflared DLL Build
 
 Build [cloudflared](https://github.com/cloudflare/cloudflared) as a shared library (DLL/SO/DYLIB).
 
 ## Quick Start
 
+### Using the DLL/SO/DYLIB Directly:
+* Here's a quick example of loading and using the DLL in Python:*
 ```bash
 # 1. Load DLL
 python test.py binaries/windows-amd64/cloudflared-windows-amd64.dll
@@ -46,6 +69,14 @@ lib.CloudflaredInit()
 lib.CloudflaredRun(b"cloudflared tunnel --url http://localhost:8080 --protocol http2")
 # ... your app runs ...
 lib.CloudflaredStop()
+```
+
+### Or use the Python utilities:
+See the `python/` folder for scripts to check connectivity, detect VPNs, manage tunnels, and download binaries:
+
+```bash
+cd python
+python main.py
 ```
 
 ## Exported Functions
