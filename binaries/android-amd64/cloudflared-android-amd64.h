@@ -85,6 +85,9 @@ extern int CloudflaredRunSync(char* cArgs);
 extern int CloudflaredStop();
 extern void CloudflaredFreeString(char* s);
 extern char* CloudflaredVersion();
+extern char* CloudflaredGetTunnelURL();
+extern int CloudflaredGetTunnelStatus();
+extern void CloudflaredSetTunnelURL(char* cURL);
 
 #ifdef __cplusplus
 }
