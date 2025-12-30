@@ -11,7 +11,7 @@
     {
       "original_path": "cmd/cloudflared/dll_exports.go",
       "modified_file": "modified_files/dll_exports.go",
-      "description": "NEW: C-exported DLL entry points with tunnel URL/status API functions",
+      "description": "NEW: C-exported DLL entry points with tunnel URL/status API and silent mode support",
       "is_new": true
     },
     {
