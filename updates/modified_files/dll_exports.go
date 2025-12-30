@@ -19,7 +19,15 @@ var (
 	globalStopped     bool
 	globalTunnelURL   string
 	globalTunnelReady bool
+	globalSilentMode  bool
 )
+
+//export CloudflaredSetSilentMode
+func CloudflaredSetSilentMode(silent C.int) {
+	globalMu.Lock()
+	defer globalMu.Unlock()
+	globalSilentMode = (silent != 0)
+}
 
 //export CloudflaredInit
 func CloudflaredInit() C.int {
