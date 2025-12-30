@@ -56,8 +56,11 @@ lib.CloudflaredStop()
 See the `python/` folder for scripts to check connectivity, detect VPNs, manage tunnels, and download binaries:
 
 ```bash
-cd python
-python main.py
+# cd python
+# python main.py
+
+# for now use test.py
+python test.py
 ```
 
 ## Exported Functions
