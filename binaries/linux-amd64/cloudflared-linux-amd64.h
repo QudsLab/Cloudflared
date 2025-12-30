@@ -79,6 +79,7 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
+extern void CloudflaredSetSilentMode(int silent);
 extern int CloudflaredInit();
 extern int CloudflaredRun(char* cArgs);
 extern int CloudflaredRunSync(char* cArgs);
