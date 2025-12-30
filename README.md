@@ -29,9 +29,8 @@ Ever wondered why this repo exists? So did we! Maybe you want to run Cloudflare 
 - Python utilities for scripting, automation, and fun
 - A reason to say "it just works" (most of the time)
 
-If you’re reading this, you’re probably either a developer, a hacker, or just lost. Welcome!
-
-
+If you’re reading this, you’re probably either a developer, a hacker, or just lost. Welcome! <br>
+Also it was requested in [cloudflared Issue #1402](https://github.com/cloudflare/cloudflared/issues/1402) so here we are.
 ## Cloudflared DLL Build
 
 Build [cloudflared](https://github.com/cloudflare/cloudflared) as a shared library (DLL/SO/DYLIB).
