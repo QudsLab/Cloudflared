@@ -89,6 +89,7 @@ extern char* CloudflaredVersion();
 extern char* CloudflaredGetTunnelURL();
 extern int CloudflaredGetTunnelStatus();
 extern void CloudflaredSetTunnelURL(char* cURL);
+extern int CloudflaredStartQuickTunnel(int port);
 
 #ifdef __cplusplus
 }

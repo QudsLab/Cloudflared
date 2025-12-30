@@ -89,6 +89,7 @@ extern __declspec(dllexport) char* CloudflaredVersion();
 extern __declspec(dllexport) char* CloudflaredGetTunnelURL();
 extern __declspec(dllexport) int CloudflaredGetTunnelStatus();
 extern __declspec(dllexport) void CloudflaredSetTunnelURL(char* cURL);
+extern __declspec(dllexport) int CloudflaredStartQuickTunnel(int port);
 
 #ifdef __cplusplus
 }
