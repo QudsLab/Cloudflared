@@ -18,7 +18,25 @@ permissions:
   contents: write
 
 jobs:
+  check-skip:
+    runs-on: ubuntu-latest
+    outputs:
+      skip_build: ${{ steps.check.outputs.skip_build }}
+    steps:
+      - name: Check commit message
+        id: check
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"(No Bin Change)"* ]]; then
+            echo "skip_build=true" >> $GITHUB_OUTPUT
+            echo "Skipping build - commit contains (No Bin Change)"
+          else
+            echo "skip_build=false" >> $GITHUB_OUTPUT
+            echo "Build will proceed"
+          fi
+
   build:
+    needs: check-skip
+    if: needs.check-skip.outputs.skip_build != 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -270,7 +288,8 @@ jobs:
           path: binaries/${{ matrix.goos }}-${{ matrix.goarch }}/
 
   commit-binaries:
-    needs: build
+    needs: [check-skip, build]
+    if: needs.check-skip.outputs.skip_build != 'true'
     runs-on: ubuntu-latest
 
     steps:
