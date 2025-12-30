@@ -17,6 +17,8 @@ var (
 	globalMu          sync.Mutex
 	globalInitialized bool
 	globalStopped     bool
+	globalTunnelURL   string
+	globalTunnelReady bool
 )
 
 //export CloudflaredInit
@@ -107,6 +109,41 @@ func CloudflaredFreeString(s *C.char) {
 //export CloudflaredVersion
 func CloudflaredVersion() *C.char {
 	return C.CString(Version)
+}
+
+//export CloudflaredGetTunnelURL
+func CloudflaredGetTunnelURL() *C.char {
+	globalMu.Lock()
+	defer globalMu.Unlock()
+	
+	if globalTunnelURL == "" {
+		return nil
+	}
+	return C.CString(globalTunnelURL)
+}
+
+//export CloudflaredGetTunnelStatus
+func CloudflaredGetTunnelStatus() C.int {
+	globalMu.Lock()
+	defer globalMu.Unlock()
+	
+	// 0 = not started, 1 = starting, 2 = ready
+	if !globalInitialized {
+		return 0
+	}
+	if globalTunnelReady {
+		return 2
+	}
+	return 1
+}
+
+//export CloudflaredSetTunnelURL
+func CloudflaredSetTunnelURL(cURL *C.char) {
+	globalMu.Lock()
+	defer globalMu.Unlock()
+	
+	globalTunnelURL = C.GoString(cURL)
+	globalTunnelReady = true
 }
 
 func main() {}

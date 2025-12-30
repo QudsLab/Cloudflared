@@ -11,7 +11,7 @@
     {
       "original_path": "cmd/cloudflared/dll_exports.go",
       "modified_file": "modified_files/dll_exports.go",
-      "description": "NEW: C-exported DLL entry points",
+      "description": "NEW: C-exported DLL entry points with tunnel URL/status API functions",
       "is_new": true
     },
     {
@@ -33,6 +33,11 @@
       "original_path": "cmd/cloudflared/windows_service.go",
       "modified_file": "modified_files/windows_service.go",
       "description": "Changed runApp to accept args parameter, updated windowsService struct"
+    },
+    {
+      "original_path": "cmd/cloudflared/tunnel/quick_tunnel.go",
+      "modified_file": "modified_files/quick_tunnel.go",
+      "description": "Added stdout output and DLL callback to set tunnel URL globally for API access"
     }
   ]
 }
