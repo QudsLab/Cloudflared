@@ -9,8 +9,8 @@
       "description": "Added runAppWithArgs function for DLL support"
     },
     {
-      "original_path": "cmd/cloudflared/dll_exports.go",
-      "modified_file": "modified_files/dll_exports.go",
+      "original_path": "cmd/cloudflared/lib_bin_exports.go",
+      "modified_file": "modified_files/lib_bin_exports.go",
       "description": "NEW: C-exported DLL entry points with tunnel URL/status API and silent mode support",
       "is_new": true
     },

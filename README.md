@@ -56,11 +56,8 @@ lib.CloudflaredStop()
 See the `python/` folder for scripts to check connectivity, detect VPNs, manage tunnels, and download binaries:
 
 ```bash
-# cd python
-# python main.py
-
-# for now use test.py
-python test.py
+cd python
+python main.py
 ```
 
 ## Exported Functions
@@ -124,7 +121,7 @@ go build -buildmode=c-shared -o cloudflared.dll ./cmd/cloudflared
 | File             | Change                   |
 | ---------------- | ------------------------ |
 | `main.go`        | Added `runAppWithArgs()` |
-| `dll_exports.go` | **NEW** - C exports      |
+| `lib_bin_exports.go` | **NEW** - C exports      |
 | `*_service.go`   | Accept args parameter    |
 
 ## GitHub Actions

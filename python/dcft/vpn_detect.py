@@ -63,7 +63,7 @@ class VPNDetector:
                     total_confidence += self.weights.get(method_name, 0.05)
             except Exception as e:
                 self.results['methods'][method_name] = False
-                print(f"  ⚠️  {method_name} failed: {e}")
+                # Silently handle errors in module mode
         # Calculate final confidence (0.0 - 1.0)
         self.results['confidence'] = min(total_confidence, 1.0)
         # Determine if VPN is active
@@ -473,42 +473,6 @@ class VPNDetector:
 
 
 if __name__ == "__main__":
-    # def print_results(self):
-    #     """Print detection results with confidence"""
-    #     print("\n" + "="*70)
-    #     print("VPN/TUNNEL DETECTION RESULTS")
-    #     print("="*70)
-    #     confidence_pct = self.results['confidence'] * 100
-    #     if self.results['vpn_detected']:
-    #         print(f"🔴 VPN/TUNNEL DETECTED (Confidence: {confidence_pct:.1f}%)")
-    #     else:
-    #         print(f"🟢 NO VPN DETECTED (Confidence: {100-confidence_pct:.1f}%)")
-    #     print(f"\n📊 Confidence Score: {self.results['confidence']:.3f} / 1.000")
-    #     print("\n🔍 Detection Methods (weighted):")
-    #     for method, detected in self.results['methods'].items():
-    #         weight = self.weights.get(method, 0.05)
-    #         status = "✓" if detected else "✗"
-    #         bar_len = int(weight * 50)
-    #         bar = "█" * bar_len + "░" * (5 - bar_len)
-    #         print(f"  {status} {method:20s} {bar} {weight:.2f}")
-    #     print("\n🌐 Network Information:")
-    #     if self.results['gateway']:
-    #         print(f"  Gateway: {self.results['gateway']}")
-    #     if self.results['local_ip']:
-    #         print(f"  Local IP: {self.results['local_ip']}")
-    #     if self.results['public_ip']:
-    #         print(f"  Public IP: {self.results['public_ip']}")
-    #     if self.results['traceroute_hops']:
-    #         print(f"  Traceroute Hops: {self.results['traceroute_hops']}")
-    #     if self.results['virtual_interfaces']:
-    #         print("\n🔌 Virtual Interfaces:")
-    #         for iface in self.results['virtual_interfaces'][:3]:
-    #             print(f"  - {iface[:60]}")
-    #     if self.results['dns_servers']:
-    #         print("\n📡 VPN DNS Servers:")
-    #         for dns in self.results['dns_servers']:
-    #             print(f"  - {dns}")
-    #     print("="*70)
 
     detector = VPNDetector()
     results = detector.detect_all()
@@ -517,3 +481,16 @@ if __name__ == "__main__":
     print("📋 Simple Output:")
     print(f"VPN_DETECTED={str(is_vpn).lower()}")
     print(f"CONFIDENCE={results['confidence']:.3f}")
+
+# Simple wrapper functions for easy import
+def is_vpn_connected():
+    """Check if VPN is connected. Returns True if VPN detected."""
+    detector = VPNDetector()
+    results = detector.detect_all()
+    return results["vpn_detected"]
+
+
+def get_vpn_details():
+    """Get detailed VPN detection results."""
+    detector = VPNDetector()
+    return detector.detect_all()

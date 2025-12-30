@@ -1,7 +1,22 @@
-# Cloudflared DLL API - Tunnel Status & URL Functions
+# Cloudflared DLL API - Clean Status & URL Access
 
 ## Overview
-Added clean API functions to get tunnel status and URL directly from the DLL without parsing output.
+Clean API to get tunnel status and URL directly without parsing output or logs.
+
+## Quick Start
+
+```python
+from t import load_dll, init_tunnel, start_tunnel, get_tunnel_url
+
+# Load DLL (silent mode by default)
+load_dll("path/to/cloudflared.dll", silent=True, debug=False)
+init_tunnel()
+
+# Start tunnel and wait for URL
+if start_tunnel(port=5000, timeout=30, debug=False):
+    url = get_tunnel_url()
+    print(f"Tunnel URL: {url}")  # Only this prints!
+```
 
 ## New DLL Functions
 
@@ -92,7 +107,7 @@ while True:
 
 ## Modified Files
 
-1. **dll_exports.go**
+1. **lib_bin_exports.go**
    - Added `globalTunnelURL` and `globalTunnelReady` globals
    - Added `CloudflaredGetTunnelURL()` export
    - Added `CloudflaredGetTunnelStatus()` export
