@@ -155,3 +155,23 @@ func CloudflaredSetTunnelURL(cURL *C.char) {
 }
 
 func main() {}
+
+//export CloudflaredStartQuickTunnel
+func CloudflaredStartQuickTunnel(port C.int) C.int {
+       globalMu.Lock()
+       if !globalInitialized {
+	       globalMu.Unlock()
+	       return -1
+       }
+       shutdownC := globalShutdownC
+       globalMu.Unlock()
+
+       args := []string{"cloudflared", "tunnel", "--url",
+	       "http://localhost:" +  strconv.Itoa(int(port)),
+	       "--protocol", "http2", "--loglevel", "fatal"}
+
+       go func() {
+	       runAppWithArgs(shutdownC, args)
+       }()
+       return 0
+}
