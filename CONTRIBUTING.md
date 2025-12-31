@@ -3,7 +3,7 @@
 Want to add support for your favorite language? Awesome! Here’s how you can build a new wrapper (like the Python one) for Cloudflared:
 
 ## 1. Pick Your Language
-- Node.js, Rust, C#, Ruby, Java, etc. — anything goes!
+- Node.js, Rust, C#, Ruby, Java, etc. anything goes!
 
 ## 2. Use the Shared Library
 - All wrappers should use the prebuilt DLL/SO/DYLIB files in the `binaries/` folder.
