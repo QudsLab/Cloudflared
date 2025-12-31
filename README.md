@@ -5,6 +5,30 @@
 </p>
 
 
+
+
+
+<div align="center">
+
+**Embeddable Cloudflared with Programmatic Tunnel Access**
+
+Run Cloudflare tunnels across desktop and mobile platforms with **prebuilt binaries**,  
+**shared libraries**, and **clean automation support** — no Go toolchain required.
+
+[![Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-orange?style=flat-square&logo=cloudflare)](#)
+[![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-blue?style=flat-square)](#)
+[![Arch](https://img.shields.io/badge/Arch-x86%20%7C%20x64%20%7C%20ARM64-orange?style=flat-square)](#)
+[![Embedding](https://img.shields.io/badge/Embedding-DLL%20%7C%20SO%20%7C%20DYLIB-green?style=flat-square)](#)
+[![Automation](https://img.shields.io/badge/Automation-Scriptable-yellow?style=flat-square)](#)
+
+</div>
+
+
+
+
+
+<!--
+
 <div align="center">
 
 [![Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-orange?style=flat-square&logo=cloudflare)](#) <br>
@@ -18,7 +42,7 @@
 
 </div>
 
-
+-->
 
 ## Why The Hell Is This Here?
 
@@ -32,6 +56,12 @@ Ever wondered why this repo exists? So did we! Maybe you want to run Cloudflare 
 If you’re reading this, you’re probably either a developer, a hacker, or just lost. Welcome! <br>
 Also it was requested in [cloudflared Issue #1402](https://github.com/cloudflare/cloudflared/issues/1402) so here we are.
 ## Cloudflared DLL Build
+
+
+
+
+
+
 
 Build [cloudflared](https://github.com/cloudflare/cloudflared) as a shared library (DLL/SO/DYLIB).
 
