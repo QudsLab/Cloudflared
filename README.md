@@ -1,163 +1,179 @@
-
-
-<p align="center">
-    <img src="assets/banner.png" alt="Cloudflared Banner" />
-</p>
-
-
-
-
-
 <div align="center">
 
-**Embeddable Cloudflared with Programmatic Tunnel Access**
+<img src="assets/banner_3.png" alt="Cloudflared Banner" />
 
-Run Cloudflare tunnels across desktop and mobile platforms with **prebuilt binaries**,  
-**shared libraries**, and **clean automation support** — no Go toolchain required.
+<!-- # 🚀 Cloudflared DLL: Tunnels Made Simple -->
+
+### **Embed Cloudflare Tunnels anywhere.** Desktop apps, mobile platforms, automation scripts ,no Go compiler, no complexity. Just drop in a library and go.
 
 [![Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-orange?style=flat-square&logo=cloudflare)](#)
 [![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-blue?style=flat-square)](#)
 [![Arch](https://img.shields.io/badge/Arch-x86%20%7C%20x64%20%7C%20ARM64-orange?style=flat-square)](#)
 [![Embedding](https://img.shields.io/badge/Embedding-DLL%20%7C%20SO%20%7C%20DYLIB-green?style=flat-square)](#)
-[![Automation](https://img.shields.io/badge/Automation-Scriptable-yellow?style=flat-square)](#)
+[![Automation](https://img.shields.io/badge/Automation-Ready-yellow?style=flat-square)](#)
+
+[**Download Binaries**](DOWNLOAD.md) • [**Quick Start**](#quick-start) • [**Python Utils**](python/) • [**Build Guide**](#build-it-yourself)
 
 </div>
 
+---
 
+## 💡 What Makes This Different?
 
+The official `cloudflared` is a CLI tool. This project transforms it into a **shared library** you can integrate into any application:
 
+✨ **Embed tunnels in your apps**  Call tunnel functions from Python, C++, C#, Java, or any language with FFI  
+📦 **Prebuilt for 12 platforms**  Windows, Linux, macOS, Android (ARM/x86/x64)  
+🔧 **No Go toolchain needed**  Just load the DLL/SO and call functions  
+🤖 **Automation-first**  Python scripts included for tunnel management, VPN detection, and connectivity checks  
+🎯 **Born from community demand**  Requested in [cloudflared #1402](https://github.com/cloudflare/cloudflared/issues/1402)
 
-<!--
+### Real-World Use Cases
 
-<div align="center">
+- **Embed in desktop apps** to expose local services securely
+- **Android/iOS apps** that need reverse proxies without root
+- **Automation scripts** that spin up/tear down tunnels dynamically
+- **Testing frameworks** that need temporary public URLs
+- **CI/CD pipelines** for webhook testing or preview deployments
 
-[![Tunnel](https://img.shields.io/badge/Cloudflare-Tunnel-orange?style=flat-square&logo=cloudflare)](#) <br>
-[![Desktop](https://img.shields.io/badge/Desktop-Windows%20%7C%20Linux%20%7C%20macOS-blue?style=flat-square)](#)
-[![Architecture](https://img.shields.io/badge/Arch-x86%20%7C%20x64%20%7C%20ARM64-orange?style=flat-square)](#)
-[![Mobile](https://img.shields.io/badge/Mobile-Android%20%7C%20Native%20Bin-green?style=flat-square)](#)
-[![Compatibility](https://img.shields.io/badge/Compatible%20With-Any%20Language-lightgrey?style=flat-square)](#)
-[![Index](https://img.shields.io/badge/Index-bin.json-blue?style=flat-square)](#)
-[![Automation](https://img.shields.io/badge/Automation-Scriptable-yellow?style=flat-square)](#)
-[![Update-Check](https://img.shields.io/badge/Update%20Check-Checksum%20Based-blue?style=flat-square)](#)
+---
 
-</div>
+## 🎯 Quick Start
 
--->
+### Using the Library (3 lines of code)
 
-## Why The Hell Is This Here?
-
-Ever wondered why this repo exists? So did we! Maybe you want to run Cloudflare tunnels on Windows, Linux, macOS, or even Android, without the hassle of compiling Go code or hunting for binaries. Maybe you just like tunnels. Or maybe you just want to see if your VPN is lying to you. Either way, this project gives you:
-
-- Prebuilt binaries for every platform (even the weird ones)
-- DLL/SO/DYLIB for embedding in your own apps
-- Python utilities for scripting, automation, and fun
-- A reason to say "it just works" (most of the time)
-
-If you’re reading this, you’re probably either a developer, a hacker, or just lost. Welcome! <br>
-Also it was requested in [cloudflared Issue #1402](https://github.com/cloudflare/cloudflared/issues/1402) so here we are.
-## Cloudflared DLL Build
-
-
-
-
-
-
-
-Build [cloudflared](https://github.com/cloudflare/cloudflared) as a shared library (DLL/SO/DYLIB).
-
-## Quick Start
-
-### Using the DLL/SO/DYLIB Directly:
-* Here's a quick example of loading and using the DLL in Python:*
-```bash
-# 1. Load DLL
-python test.py binaries/windows-amd64/cloudflared-windows-amd64.dll
-
-# 2. Or use in your code:
+```python
 import ctypes
+
+# Load the library (DLL/SO/DYLIB based on your platform)
 lib = ctypes.CDLL("cloudflared.dll")
+
+# Initialize once
 lib.CloudflaredInit()
+
+# Start a tunnel (runs async in background)
 lib.CloudflaredRun(b"cloudflared tunnel --url http://localhost:8080 --protocol http2")
-# ... your app runs ...
+
+# Your app runs here...
+
+# Graceful shutdown
 lib.CloudflaredStop()
 ```
 
-### Or use the Python utilities:
-See the `python/` folder for scripts to check connectivity, detect VPNs, manage tunnels, and download binaries:
+### Using Python Utilities
+
+We've built scripts to make your life easier:
 
 ```bash
 cd python
+
+# Interactive menu with all features
 python main.py
+
+# Or use individual scripts:
+python check_connectivity.py   # Test Cloudflare connectivity
+python vpn_detect.py           # Check if you're behind a VPN
+python download_binaries.py    # Auto-download for your platform
 ```
 
-## Exported Functions
+---
 
-| Function                         | Description                   |
-| -------------------------------- | ----------------------------- |
-| `CloudflaredInit()`              | Initialize (call once)        |
-| `CloudflaredRun(char* args)`     | Run tunnel command (async)    |
-| `CloudflaredRunSync(char* args)` | Run tunnel command (blocking) |
-| `CloudflaredStop()`              | Shutdown gracefully           |
-| `CloudflaredVersion()`           | Get version string            |
+## 📚 Library API
 
-## Platforms (12)
+| Function | Description | Usage |
+|----------|-------------|-------|
+| `CloudflaredInit()` | Initialize library | Call once at startup |
+| `CloudflaredRun(char* args)` | Start tunnel (async) | Non-blocking, returns immediately |
+| `CloudflaredRunSync(char* args)` | Start tunnel (blocking) | Blocks until tunnel stops |
+| `CloudflaredStop()` | Stop tunnel | Graceful shutdown |
+| `CloudflaredVersion()` | Get version | Returns version string |
 
-| Platform                  | File     |
-| ------------------------- | -------- |
-| Windows x64/x86           | `.dll`   |
-| Linux x64/x86/ARM64/ARM   | `.so`    |
-| macOS Intel/ARM64         | `.dylib` |
-| Android ARM64/ARM/x64/x86 | `.so`    |
+---
 
-## Important: Protocol Selection
+## 🌍 Platforms (12)
 
-> **Use `--protocol http2`** if you have firewall/network issues!
+| Platform | Architectures | Extension |
+|----------|--------------|-----------|
+| **Windows** | x64, x86 | `.dll` |
+| **Linux** | x64, x86, ARM64, ARM | `.so` |
+| **macOS** | Intel, Apple Silicon (ARM64) | `.dylib` |
+| **Android** | ARM64, ARM, x64, x86 | `.so` |
+
+All binaries are **automatically built** via GitHub Actions and committed to the [`binaries/`](binaries/) folder. No manual compilation required!
+
+---
+
+## 🔥 Firewall Issues? Use HTTP/2
+
+**Problem:** Default QUIC protocol uses UDP, often blocked by firewalls, VPNs, or corporate networks.
+
+**Solution:** Add `--protocol http2` to use TCP instead:
 
 ```bash
-# QUIC (default) - uses UDP, often blocked by firewalls
+# ❌ QUIC (UDP) - May fail on restricted networks
 cloudflared tunnel --url http://localhost:8080
 
-# HTTP/2 - uses TCP, works through most firewalls ✓
+# ✅ HTTP/2 (TCP) - Works through most firewalls
 cloudflared tunnel --url http://localhost:8080 --protocol http2
 ```
 
-## Why QUIC Fails
+### When to Use HTTP/2
 
-QUIC uses UDP which is often blocked by:
-
-- Corporate firewalls
-- VPNs
-- Some ISPs
+- Corporate/university networks
+- Behind VPNs or proxies
+- ISPs that throttle/block UDP
 - Windows Firewall with strict rules
 
-**Solution**: Add `--protocol http2` to use TCP instead.
+---
 
-## Build It Yourself
+## 🛠️ Build It Yourself
+
+Want to customize or verify the build?
 
 ```bash
-# 1. Clone
+# 1. Clone official cloudflared
 git clone https://github.com/cloudflare/cloudflared.git
 
-# 2. Apply modifications
+# 2. Apply modifications (adds C exports)
 python updates/replace.py ./cloudflared
 
-# 3. Build
+# 3. Build as shared library
 cd cloudflared
 go build -buildmode=c-shared -o cloudflared.dll ./cmd/cloudflared
 ```
 
-## Files Modified
+### What Gets Modified?
 
-| File             | Change                   |
-| ---------------- | ------------------------ |
-| `main.go`        | Added `runAppWithArgs()` |
-| `lib_bin_exports.go` | **NEW** - C exports      |
-| `*_service.go`   | Accept args parameter    |
+| File | Change |
+|------|--------|
+| `main.go` | Added `runAppWithArgs()` for programmatic control |
+| `lib_bin_exports.go` | **NEW**  C-compatible exports |
+| `*_service.go` | Modified to accept args parameter |
 
-## GitHub Actions
+All changes are minimal and preserve original functionality.
 
-Builds run automatically and commit to `binaries/` folder.
+---
 
-## License
+## 🤝 Contributing
 
-Apache 2.0 (same as cloudflared)
+Found a bug? Have a feature request? Want to add support for a new platform?
+
+- **Open an issue**  We track everything
+- **Submit a PR**  Contributions welcome
+- **Star the repo** Helps others discover this project
+
+---
+
+## ⚖️ License
+
+Apache 2.0 (same as official cloudflared)
+
+---
+
+<div align="center">
+
+**If this saved you hours of setup time, consider giving it a ⭐**
+
+Built with 🔥 by developers, for developers
+
+</div>
