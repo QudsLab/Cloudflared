@@ -1,4 +1,4 @@
 d41d8cd98f00b204e9800998ecf8427e  MD5SUMS.txt
-f4b58e3b7f87d62ca9179087c21d5b3d  SHA256SUMS.txt
+97e32338b8f997de1e7306a1b74ae939  SHA256SUMS.txt
 60ed8a21d75e6792adf5e7485c1764d8  cloudflared-windows-386.dll
 c49a90a3449e2faec0dfd3f54aaad099  cloudflared-windows-386.h
