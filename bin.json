@@ -13,8 +13,8 @@
         {
           "filename": "cloudflared-android-386.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/android-386/cloudflared-android-386.so",
-          "sha256": "faae36b48cdffba7f1abd0f545c4a82cda7e1f7bb971d388bdf664642662f553",
-          "md5": "8379ae272c8196df026be71c2dcfd397",
+          "sha256": "c51e536c1ae3e19d11d35d002066dfd69cd9ba99380008607d690ddee6134594",
+          "md5": "c3d99df90fbd1d5ecbac0722df6f1681",
           "size": 39534644
         }
       ]
@@ -31,8 +31,8 @@
         {
           "filename": "cloudflared-android-amd64.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/android-amd64/cloudflared-android-amd64.so",
-          "sha256": "a01a615166a69489eff7f443477a4990ef4b6a2f08e4c6ff256e8e0ad833d35d",
-          "md5": "cdd879567798605a9247a7091adb85eb",
+          "sha256": "29017e92d9a01517be9514d9a8fe2ae939a795f8606997438689f7bf0a75206e",
+          "md5": "b82080347bd19924544fdf25fa5310e9",
           "size": 44233480
         }
       ]
@@ -49,8 +49,8 @@
         {
           "filename": "cloudflared-android-arm.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/android-arm/cloudflared-android-arm.so",
-          "sha256": "df00bd10eb5289ec6277289e7507d706eb35f9f73ebaf458d10eec0defcc47ca",
-          "md5": "5a35a8c7424170d710c5e76ff2bbb9c9",
+          "sha256": "8d7eb826586d073ab5f68c8c54f3968686b90072b8d5f28405d4d9727fd60d20",
+          "md5": "11136f51377994f5a4e8a5782c3ed8e8",
           "size": 38506876
         }
       ]
@@ -67,8 +67,8 @@
         {
           "filename": "cloudflared-android-arm64.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/android-arm64/cloudflared-android-arm64.so",
-          "sha256": "27228d4be9317feca229ddb71e353fc5489c79b9305080c641f22ca10945cafe",
-          "md5": "5940b7c739931b0bc20dd2b21b3bdb03",
+          "sha256": "3e08199c76e8374c4b1e705fcc65ceb6ecf1e602f3ac9fad0fc2cfbce30cbc0d",
+          "md5": "477419a9e1c30ffc47cf9e4a9868d8d7",
           "size": 42406048
         }
       ]
@@ -78,8 +78,8 @@
         {
           "filename": "cloudflared-darwin-amd64.dylib",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/darwin-amd64/cloudflared-darwin-amd64.dylib",
-          "sha256": "21bf318ee8b0a40118c484aee90969597552b27afdeec5991405e073981597cf",
-          "md5": "3d7eafd2971a7b26b4bd9487e6a2ddd6",
+          "sha256": "43c5d04557ba2cc5c1a27be0d4a095a2fb5c6b1093a71e100d8635dc54ab69b6",
+          "md5": "181953bdfe6ed9005195d63d5c59d66d",
           "size": 31197480
         },
         {
@@ -96,8 +96,8 @@
         {
           "filename": "cloudflared-darwin-arm64.dylib",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/darwin-arm64/cloudflared-darwin-arm64.dylib",
-          "sha256": "5c47c862a6b381ddc38f3d79118cd97ccd6bbda6c7c070c03688db9b5ffa5584",
-          "md5": "12409dc70daec65c204a0d7bfe645080",
+          "sha256": "9908a225d46f12261ddc6d301d1d1ceb2787134c0552e31de2ed2b18392ef7e7",
+          "md5": "f3d6b6fde2e238d65d73ca42523ec816",
           "size": 29990162
         },
         {
@@ -121,8 +121,8 @@
         {
           "filename": "cloudflared-linux-386.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/linux-386/cloudflared-linux-386.so",
-          "sha256": "2dad2b7cb9e43f8c7b53e13dcd2152e0713a62c9dfbb2e384cecc12de66d4984",
-          "md5": "eff2b85af10f1009c89f33b6d910f852",
+          "sha256": "d6974afa84963ff36491db89f593254be6fff30b1145fe5c637b800cbaf1609d",
+          "md5": "91a92fa9565b29594ff905ce9298f611",
           "size": 38727860
         }
       ]
@@ -139,8 +139,8 @@
         {
           "filename": "cloudflared-linux-amd64.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/linux-amd64/cloudflared-linux-amd64.so",
-          "sha256": "896d5f042147b11fffa27dfbfe14a1f5fece06f3482bb1e91eac92c3e26fd6c1",
-          "md5": "c89d17d0b60495b9e029c3f1fc35b7e0",
+          "sha256": "e0892da0efedf2d9ac9b8e61f70f2c940b7e89b99a264b9d1cc28828598d7e1b",
+          "md5": "41675020c747c30ca685335961d70642",
           "size": 43169312
         }
       ]
@@ -157,8 +157,8 @@
         {
           "filename": "cloudflared-linux-arm.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/linux-arm/cloudflared-linux-arm.so",
-          "sha256": "5fb900789fe263d51d48b212cfa0d38daedf639cf5e3566a35c225634edfe62e",
-          "md5": "3c98cff577368fa7fc661c9e60c3f5a5",
+          "sha256": "f3c79ba190b96d1842f397b42ae05336e9a1342921085aec12883d85240190f8",
+          "md5": "b64946783ecc7fac681a6e103bb59f42",
           "size": 37651780
         }
       ]
@@ -175,8 +175,8 @@
         {
           "filename": "cloudflared-linux-arm64.so",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/linux-arm64/cloudflared-linux-arm64.so",
-          "sha256": "60734a63870f3f1728e51eca9afabe2bc32e656fb3eb6206624423c89f6cab64",
-          "md5": "b131e47dd6113a5e7395b35979c470fe",
+          "sha256": "fe8a8696f2776cfaafb2280e10385ebd9fcf4644d6784abadb5b7d3c1b9e8a12",
+          "md5": "a70c1e84169b6a1b76cf41b42425d205",
           "size": 41199088
         }
       ]
@@ -186,8 +186,8 @@
         {
           "filename": "cloudflared-windows-386.dll",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/windows-386/cloudflared-windows-386.dll",
-          "sha256": "59603212fb2d15dd649fabb810aede67173f5259c9a576004bd3ab33acc30430",
-          "md5": "60ed8a21d75e6792adf5e7485c1764d8",
+          "sha256": "6c7a9619b0d41f705ae1a5930816c82f1353736bcfc3140f11c71b59b5f60483",
+          "md5": "115bebfdd0ecbf4504d6c50ef6ce28e6",
           "size": 56619387
         },
         {
@@ -204,8 +204,8 @@
         {
           "filename": "cloudflared-windows-amd64.dll",
           "url": "https://raw.githubusercontent.com/QudsLab/Cloudflared/main/binaries/windows-amd64/cloudflared-windows-amd64.dll",
-          "sha256": "2585a8687ea770a288d790e75760ed699c368804390c26aa20a7ba1a37fc88bc",
-          "md5": "2e83f6aff2e03c99b00ff1c3370a8be6",
+          "sha256": "4d1765c112b581203f19f64032b87effad8524c7d93dbfca14b9c426b6143750",
+          "md5": "2c4c1dc1a70967e6970fb631b2682aed",
           "size": 68918595
         },
         {
