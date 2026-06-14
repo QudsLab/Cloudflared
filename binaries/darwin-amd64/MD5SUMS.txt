@@ -1,4 +1,4 @@
 1cc51400459b340486ce67e2e2925e26  cloudflared-darwin-amd64.dylib
 a10560798888023579ec9bc1dad3249e  cloudflared-darwin-amd64.h
 d41d8cd98f00b204e9800998ecf8427e  MD5SUMS.txt
-ec32d2db4798b12357cf9a3ee90f20e6  SHA256SUMS.txt
+c2d7eb2744509da343b7d2010e50db95  SHA256SUMS.txt
