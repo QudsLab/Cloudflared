@@ -1,4 +1,4 @@
 d41d8cd98f00b204e9800998ecf8427e  MD5SUMS.txt
-e2de6479b82b1d4b011863f89d2419b2  SHA256SUMS.txt
+685270ff575e920c66712e98e581957f  SHA256SUMS.txt
 1b70d68e78f7377b05968bb6285a0088  cloudflared-linux-arm.h
-32ca57beb507c9fa3c4fc3a2e1defd94  cloudflared-linux-arm.so
+1313e05a931075d69704bd67a8cc43fb  cloudflared-linux-arm.so
