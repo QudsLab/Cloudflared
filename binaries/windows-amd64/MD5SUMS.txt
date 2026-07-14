@@ -1,4 +1,4 @@
 d41d8cd98f00b204e9800998ecf8427e *MD5SUMS.txt
-a097a449a0e1dc7bd7f2fd6ba3bdadb8 *SHA256SUMS.txt
+77f08f5bbfda2774a568bdc036086837 *SHA256SUMS.txt
 4f11b90e0051f7de37a78e9c9d553e3b *cloudflared-windows-amd64.dll
 a10560798888023579ec9bc1dad3249e *cloudflared-windows-amd64.h
